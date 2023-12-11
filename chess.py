@@ -49,40 +49,40 @@ class board():
     
     def update_board(self):
         self.board = [
-            [' ',' ',' ',' ',' ',' ',' ',' ',],
+            ['  ','  ','  ','  ','  ','  ','  ','  ',],
 
-            [' ',' ',' ',' ',' ',' ',' ',' ',],
+            ['  ','  ','  ','  ','  ','  ','  ','  ',],
 
-            [' ',' ',' ',' ',' ',' ',' ',' ',],
+            ['  ','  ','  ','  ','  ','  ','  ','  ',],
             
-            [' ',' ',' ',' ',' ',' ',' ',' ',],
+            ['  ','  ','  ','  ','  ','  ','  ','  ',],
             
-            [' ',' ',' ',' ',' ',' ',' ',' ',],
+            ['  ','  ','  ','  ','  ','  ','  ','  ',],
             
-            [' ',' ',' ',' ',' ',' ',' ',' ',],
+            ['  ','  ','  ','  ','  ','  ','  ','  ',],
             
-            [' ',' ',' ',' ',' ',' ',' ',' ',],
+            ['  ','  ','  ','  ','  ','  ','  ','  ',],
             
-            [' ',' ',' ',' ',' ',' ',' ',' ',],
+            ['  ','  ','  ','  ','  ','  ','  ','  ',],
         ]
         for figure in self.figures:
-            self.board[figure.position[0]][figure.position[1]] = figure.type
+            self.board[figure.position[0]][figure.position[1]] = 'w' + figure.type if figure.is_white else 'b' + figure.type
 
     def render_board(self):
-        print("\n+"+("-----"+"+")*8,end="")
+        print("\n+"+("------"+"+")*8,end="")
         is_odd = False
         for line in self.board:
             is_odd = not is_odd
             print("\n|", end="")
             for j in range(4):
-                print("     "+"|"+"....."+"|" if is_odd else "....."+"|"+"     "+"|",end="")
+                print("      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|",end="")
             print("\n|", end="")
             for cell in line:
-                print(f"  {cell}  "+"|" if is_odd else f"..{cell if cell != ' ' else '.'}.."+"|",end="")
+                print(f"  {cell}  "+"|" if is_odd else f"..{cell if cell != '  ' else '..'}.."+"|",end="")
                 is_odd = not is_odd
             print("\n|", end="")
             for j in range(4):
-                print("     "+"|"+"....."+"|" if is_odd else "....."+"|"+"     "+"|",end="")
-            print("\n+"+("-----"+"+")*8,end="")
+                print("      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|",end="")
+            print("\n+"+("------"+"+")*8,end="")
 
 board().render_board()
