@@ -1,3 +1,4 @@
+#======================EXTERNAL MOVES INFO=======================
 pawn_moves_stuff = {
     #(is_white,on_first_rank):(vec,vec)
     (True,True):((-1,0),(-2,0)),
@@ -31,9 +32,13 @@ knight_moves.extend(map(lambda a: (-a[0],a[1]),knight_moves[0:len(knight_moves)]
 knight_moves.extend(map(lambda a: (a[0],-a[1]),knight_moves[0:len(knight_moves)]))
 knight_moves = tuple(knight_moves)
 
+#======================HANDY LAMBDAS=======================
 border_check = lambda pos: pos[0] >= 0 and pos[0] <= 7 and pos[1] >= 0 and pos[1] <= 7
 do_move = lambda pos,move: (pos[0]+move[0], pos[1]+move[1])
+nums_to_letters = ['h','g','f','e','d','c','b','a']
+convert_to_chess_notation = lambda pos: f"{nums_to_letters[pos[1]]}{-pos[0]+8}"
 
+#======================FIGURE CLASS=======================
 class figure:
     def __init__(self,is_white:bool,p_type:chr,position:tuple[int]):
         self.is_white = is_white
@@ -46,9 +51,9 @@ class figure:
                 return pawn_moves(self)
     
     def __repr__(self):
-        return("b"*(not self.is_white) + "w"*self.is_white + self.type + f" {self.position}")
+        return("#b"*(not self.is_white) + "#w"*self.is_white + self.type + f" {convert_to_chess_notation(self.position)}#")
 
-
+#======================BOARD CLASS=======================
 class board():
     def __init__(self):
         self.figures = {
@@ -160,7 +165,7 @@ class board():
                         if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
                         self.posible_moves[piece.is_white].append((piece,move))
                     
-
+#======================GAME START=======================
 b = board()
 b.render_board()
-#print(b.posible_moves)
+print(b.posible_moves)
