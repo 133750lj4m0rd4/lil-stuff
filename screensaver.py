@@ -95,7 +95,7 @@ def my_logo(step:int):
 while True:
     l = 700
 
-    for i in range(165):
+    for i in range(160):
         turtle.setpos(0,0)
         my_logo(l)
         l *= 0.98
