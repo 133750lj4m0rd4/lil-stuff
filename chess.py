@@ -35,15 +35,18 @@ border_check = lambda pos: pos[0] >= 0 and pos[0] <= 7 and pos[1] >= 0 and pos[1
 do_move = lambda pos,move: (pos[0]+move[0], pos[1]+move[1])
 
 class figure:
-    def __init__(self,is_white:bool,type:chr,position:tuple[int]):
+    def __init__(self,is_white:bool,p_type:chr,position:tuple[int]):
         self.is_white = is_white
-        self.type = type
+        self.type = p_type
         self.position = position
     
     def posible_moves(self):
         match self.type:
             case 'p':
                 return pawn_moves(self)
+    
+    def __repr__(self):
+        return("b"*(not self.is_white) + "w"*self.is_white + self.type + f" {self.position}")
 
 
 class board():
@@ -133,13 +136,17 @@ class board():
         for piece in self.figures:
             match piece.type:
                 case "p":
-                    pass
+                    moves_to_check = map(lambda move: do_move(piece.position,move),pawn_moves(piece))
+                    for move in moves_to_check:
+                        if not border_check(move): continue
+                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
+                        self.posible_moves[piece.is_white].append((piece,move))
                 case "k":
                     moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
                     for move in moves_to_check:
                         if not border_check(move): continue
                         if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
-                        self.posible_moves[piece.is_white].append(move)
+                        self.posible_moves[piece.is_white].append((piece,move))
                 case "b":
                     pass
                 case "R":
@@ -151,9 +158,9 @@ class board():
                     for move in moves_to_check:
                         if not border_check(move): continue
                         if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
-                        self.posible_moves[piece.is_white].append(move)
+                        self.posible_moves[piece.is_white].append((piece,move))
                     
 
 b = board()
 b.render_board()
-print(b.posible_moves)
+#print(b.posible_moves)
