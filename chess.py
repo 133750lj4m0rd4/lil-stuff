@@ -1,10 +1,16 @@
-pawn_moves = {
+pawn_moves_stuff = {
     #(is_white,on_first_rank):(vec,vec)
     (True,True):((-1,0),(-2,0)),
-    (True,False):((-1,0)),
+    (True,False):((-1,0),),
     (False,True):((1,0),(2,0)),
-    (False,False):((1,0)),
+    (False,False):((1,0),),
+    "ranks":(1,6,)
 }
+
+pawn_moves = lambda figure: pawn_moves_stuff[
+        (figure.is_white,
+         figure.position[0] == pawn_moves_stuff["ranks"][figure.is_white])
+    ]
 
 class figure:
     def __init__(self,is_white:bool,type:chr,position:tuple[int]):
@@ -13,8 +19,9 @@ class figure:
         self.position = position
     
     def posible_moves(self):
-        temp = (1,6)
-        return(pawn_moves[(self.is_white,self.position[0] == temp[self.is_white])])
+        match self.type:
+            case 'p':
+                return pawn_moves(self)
 
 
 class board():
