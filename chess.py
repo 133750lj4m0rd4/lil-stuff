@@ -4,6 +4,7 @@ pawn_moves_stuff = {
     (True,False):((-1,0),),
     (False,True):((1,0),(2,0)),
     (False,False):((1,0),),
+    #to un-ify code
     "ranks":(1,6,)
 }
 
@@ -11,6 +12,25 @@ pawn_moves = lambda figure: pawn_moves_stuff[
         (figure.is_white,
          figure.position[0] == pawn_moves_stuff["ranks"][figure.is_white])
     ]
+
+bishop_moves = [(i,i) for i in range(1,8)]
+bishop_moves.extend(map(lambda a: (-a[0],a[1]),bishop_moves[0:len(bishop_moves)]))
+bishop_moves.extend(map(lambda a: (a[0],-a[1]),bishop_moves[0:len(bishop_moves)]))
+bishop_moves = tuple(bishop_moves)
+
+rook_moves = [(i,0) for i in range(1,8)]
+rook_moves.extend(map(lambda a: (a[1],a[0]),rook_moves[0:len(rook_moves)]))
+rook_moves.extend(map(lambda a: (-a[0],-a[1]),rook_moves[0:len(rook_moves)]))
+rook_moves = tuple(rook_moves)
+
+queen_moves = list(bishop_moves)
+queen_moves.extend(rook_moves)
+queen_moves = tuple(queen_moves)
+
+knight_moves = [(1,2),(2,1)]
+knight_moves.extend(map(lambda a: (-a[0],a[1]),knight_moves[0:len(knight_moves)]))
+knight_moves.extend(map(lambda a: (a[0],-a[1]),knight_moves[0:len(knight_moves)]))
+knight_moves = tuple(knight_moves)
 
 class figure:
     def __init__(self,is_white:bool,type:chr,position:tuple[int]):
