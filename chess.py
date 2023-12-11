@@ -33,6 +33,7 @@ knight_moves.extend(map(lambda a: (a[0],-a[1]),knight_moves[0:len(knight_moves)]
 knight_moves = tuple(knight_moves)
 
 #======================HANDY LAMBDAS=======================
+#TODO maybe rework this part idk
 border_check = lambda pos: pos[0] >= 0 and pos[0] <= 7 and pos[1] >= 0 and pos[1] <= 7
 do_move = lambda pos,move: (pos[0]+move[0], pos[1]+move[1])
 nums_to_letters = ['h','g','f','e','d','c','b','a']
@@ -68,6 +69,7 @@ class board():
             figure(False,'k',(0,6)),
             figure(False,'R',(0,7)),
 
+            #TODO rewrite pawn addition to the pecies list
             figure(False,'p',(1,0)),
             figure(False,'p',(1,1)),
             figure(False,'p',(1,2)),
@@ -86,6 +88,7 @@ class board():
             figure(True,'k',(7,6)),
             figure(True,'R',(7,7)),
 
+            #TODO rewrite pawn addition to the pecies list
             figure(True,'p',(6,0)),
             figure(True,'p',(6,1)),
             figure(True,'p',(6,2)),
@@ -100,27 +103,12 @@ class board():
         self.check_posible_moves()
     
     def update_board(self):
-        self.board = [
-            ['  ','  ','  ','  ','  ','  ','  ','  ',],
-
-            ['  ','  ','  ','  ','  ','  ','  ','  ',],
-
-            ['  ','  ','  ','  ','  ','  ','  ','  ',],
-            
-            ['  ','  ','  ','  ','  ','  ','  ','  ',],
-            
-            ['  ','  ','  ','  ','  ','  ','  ','  ',],
-            
-            ['  ','  ','  ','  ','  ','  ','  ','  ',],
-            
-            ['  ','  ','  ','  ','  ','  ','  ','  ',],
-            
-            ['  ','  ','  ','  ','  ','  ','  ','  ',],
-        ]
+        self.board = [['  ' for _ in range(8)] for _ in range(8)]
         for figure in self.figures:
             self.board[figure.position[0]][figure.position[1]] = 'w' + figure.type if figure.is_white else 'b' + figure.type
 
     def render_board(self):
+        #TODO rewrite to render into a string
         print("\n+"+("------"+"+")*8,end="")
         is_odd = False
         for line in self.board:
@@ -140,9 +128,10 @@ class board():
     
     def check_posible_moves(self):
         self.posible_moves = [[],[]]
+        #TODO decompose this shit. it's stinks
         for piece in self.figures:
             match piece.type:
-                case "p":
+                case "p": #TODO add capture logic
                     moves_to_check = map(lambda move: do_move(piece.position,move),pawn_moves(piece))
                     for move in moves_to_check:
                         if not border_check(move):
@@ -159,11 +148,11 @@ class board():
                             continue
                         self.posible_moves[piece.is_white].append((piece,move))
                 case "b":
-                    pass
+                    pass #TODO add logik and stuff
                 case "R":
-                    pass
+                    pass #TODO add logik and stuff
                 case "Q":
-                    pass
+                    pass #TODO add logik and stuff
                 case "K":
                     moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
                     for move in moves_to_check:
