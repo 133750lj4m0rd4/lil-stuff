@@ -31,6 +31,9 @@ knight_moves.extend(map(lambda a: (-a[0],a[1]),knight_moves[0:len(knight_moves)]
 knight_moves.extend(map(lambda a: (a[0],-a[1]),knight_moves[0:len(knight_moves)]))
 knight_moves = tuple(knight_moves)
 
+border_check = lambda pos: pos[0] >= 0 and pos[0] <= 7 and pos[1] >= 0 and pos[1] <= 7
+do_move = lambda pos,move: (pos[0]+move[0], pos[1]+move[1])
+
 class figure:
     def __init__(self,is_white:bool,type:chr,position:tuple[int]):
         self.is_white = is_white
@@ -123,6 +126,27 @@ class board():
                 print("      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|",end="")
             print("\n+"+("------"+"+")*8,end="")
         print()
+    
+    def check_posible_moves(self):
+        self.posible_moves = [[],[]]
+        for piece in self.figures:
+            match piece.type:
+                case "p":
+                    pass
+                case "k":
+                    pass
+                case "b":
+                    pass
+                case "R":
+                    pass
+                case "Q":
+                    pass
+                case "K":
+                    moves_to_check = map(lambda move: do_move(piece.pos,move),queen_moves[0])
+                    for move in moves:
+                        continue if not border_check(move)
+                        continue if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures))
+                        posible_moves[piece.is_white].append(move)
+                    
 
 board().render_board()
-print(queen_moves)
