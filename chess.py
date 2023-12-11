@@ -13,18 +13,17 @@ pawn_moves = lambda figure: pawn_moves_stuff[
          figure.position[0] == pawn_moves_stuff["ranks"][figure.is_white])
     ]
 
-bishop_moves = [(i,i) for i in range(1,8)]
-bishop_moves.extend(map(lambda a: (-a[0],a[1]),bishop_moves[0:len(bishop_moves)]))
-bishop_moves.extend(map(lambda a: (a[0],-a[1]),bishop_moves[0:len(bishop_moves)]))
+bishop_moves = [((i,i),(-i,i),(i,-i),(-i,-i),) for i in range(1,8)]
 bishop_moves = tuple(bishop_moves)
 
-rook_moves = [(i,0) for i in range(1,8)]
-rook_moves.extend(map(lambda a: (a[1],a[0]),rook_moves[0:len(rook_moves)]))
-rook_moves.extend(map(lambda a: (-a[0],-a[1]),rook_moves[0:len(rook_moves)]))
+rook_moves = [((i,0),(-i,0),(0,i),(0,-i),) for i in range(1,8)]
 rook_moves = tuple(rook_moves)
 
-queen_moves = list(bishop_moves)
-queen_moves.extend(rook_moves)
+queen_moves = list()
+for i in range(7):
+    queen_moves.append(list(rook_moves[i]))
+    queen_moves[i].extend(bishop_moves[i])
+    queen_moves[i] = tuple(queen_moves[i])
 queen_moves = tuple(queen_moves)
 
 knight_moves = [(1,2),(2,1)]
@@ -123,5 +122,7 @@ class board():
             for j in range(4):
                 print("      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|",end="")
             print("\n+"+("------"+"+")*8,end="")
+        print()
 
 board().render_board()
+print(queen_moves)
