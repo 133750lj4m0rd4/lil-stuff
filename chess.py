@@ -87,6 +87,7 @@ class board():
         }
         self.board = []
         self.update_board()
+        self.check_posible_moves()
     
     def update_board(self):
         self.board = [
@@ -134,7 +135,11 @@ class board():
                 case "p":
                     pass
                 case "k":
-                    pass
+                    moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
+                    for move in moves_to_check:
+                        if not border_check(move): continue
+                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
+                        self.posible_moves[piece.is_white].append(move)
                 case "b":
                     pass
                 case "R":
@@ -142,11 +147,13 @@ class board():
                 case "Q":
                     pass
                 case "K":
-                    moves_to_check = map(lambda move: do_move(piece.pos,move),queen_moves[0])
-                    for move in moves:
-                        continue if not border_check(move)
-                        continue if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures))
-                        posible_moves[piece.is_white].append(move)
+                    moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
+                    for move in moves_to_check:
+                        if not border_check(move): continue
+                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
+                        self.posible_moves[piece.is_white].append(move)
                     
 
-board().render_board()
+b = board()
+b.render_board()
+print(b.posible_moves)
