@@ -51,7 +51,9 @@ class figure:
                 return pawn_moves(self)
     
     def __repr__(self):
-        return("#b"*(not self.is_white) + "#w"*self.is_white + self.type + f" {convert_to_chess_notation(self.position)}#")
+        return("b"*(not self.is_white) + "w"*self.is_white + self.type + f" {convert_to_chess_notation(self.position)}")
+    
+    __str__ = __repr__
 
 #======================BOARD CLASS=======================
 class board():
@@ -143,14 +145,18 @@ class board():
                 case "p":
                     moves_to_check = map(lambda move: do_move(piece.position,move),pawn_moves(piece))
                     for move in moves_to_check:
-                        if not border_check(move): continue
-                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
+                        if not border_check(move):
+                            continue
+                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
+                            continue
                         self.posible_moves[piece.is_white].append((piece,move))
                 case "k":
                     moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
                     for move in moves_to_check:
-                        if not border_check(move): continue
-                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
+                        if not border_check(move):
+                            continue
+                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
+                            continue
                         self.posible_moves[piece.is_white].append((piece,move))
                 case "b":
                     pass
@@ -161,11 +167,21 @@ class board():
                 case "K":
                     moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
                     for move in moves_to_check:
-                        if not border_check(move): continue
-                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)): continue
+                        if not border_check(move):
+                            continue
+                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
+                            continue
                         self.posible_moves[piece.is_white].append((piece,move))
+
+    def print_moves(self):
+        print("======white======")
+        for move in self.posible_moves[1]:
+            print(f"{move[0]} -> {convert_to_chess_notation(move[1])}")
+        print("======black======")
+        for move in self.posible_moves[0]:
+            print(f"{move[0]} -> {convert_to_chess_notation(move[1])}")
                     
 #======================GAME START=======================
 b = board()
 b.render_board()
-print(b.posible_moves)
+b.print_moves()
