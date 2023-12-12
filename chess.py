@@ -68,16 +68,6 @@ class board():
             figure(False,'b',(0,5)),
             figure(False,'k',(0,6)),
             figure(False,'R',(0,7)),
-
-            #TODO rewrite pawn addition to the pecies list
-            figure(False,'p',(1,0)),
-            figure(False,'p',(1,1)),
-            figure(False,'p',(1,2)),
-            figure(False,'p',(1,3)),
-            figure(False,'p',(1,4)),
-            figure(False,'p',(1,5)),
-            figure(False,'p',(1,6)),
-            figure(False,'p',(1,7)),
             
             figure(True,'R',(7,0)),
             figure(True,'k',(7,1)),
@@ -87,17 +77,10 @@ class board():
             figure(True,'b',(7,5)),
             figure(True,'k',(7,6)),
             figure(True,'R',(7,7)),
-
-            #TODO rewrite pawn addition to the pecies list
-            figure(True,'p',(6,0)),
-            figure(True,'p',(6,1)),
-            figure(True,'p',(6,2)),
-            figure(True,'p',(6,3)),
-            figure(True,'p',(6,4)),
-            figure(True,'p',(6,5)),
-            figure(True,'p',(6,6)),
-            figure(True,'p',(6,7)),
         }
+        for i in range(8):
+            self.figures.add(figure(True,'p',(6,i)))
+            self.figures.add(figure(False,'p',(1,i)))
         self.board = []
         self.update_board()
         self.check_posible_moves()
