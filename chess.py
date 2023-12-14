@@ -84,7 +84,7 @@ class board():
             #pass
         self.board = []
         self.update_board()
-        self.check_posible_moves()
+        self.all_possible_moves()
     
     def update_board(self):
         self.board = [['  ' for _ in range(8)] for _ in range(8)]
@@ -110,27 +110,43 @@ class board():
             out += "\n+"+("------"+"+")*8
         print(out)
     
-    def check_posible_moves(self):
+    def pawn_check(self,piece):
+        #TODO add capture logic
+        moves_to_check = map(lambda move: do_move(piece.position,move),pawn_moves(piece))
+        for move in moves_to_check:
+            if not border_check(move):
+                continue
+            if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
+                continue
+            self.posible_moves[piece.is_white].append((piece,move))
+
+    def knight_check(self,piece):
+        moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
+        for move in moves_to_check:
+            if not border_check(move):
+                continue
+            if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
+                continue
+            self.posible_moves[piece.is_white].append((piece,move))
+
+    def king_check(self,piece):
+        moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
+        for move in moves_to_check:
+            if not border_check(move):
+                continue
+            if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
+                continue
+            self.posible_moves[piece.is_white].append((piece,move))
+
+    def all_possible_moves(self):
         self.posible_moves = [[],[]]
         #TODO decompose this shit. it's stinks
         for piece in self.figures:
             match piece.type:
-                case "p": #TODO add capture logic
-                    moves_to_check = map(lambda move: do_move(piece.position,move),pawn_moves(piece))
-                    for move in moves_to_check:
-                        if not border_check(move):
-                            continue
-                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
-                            continue
-                        self.posible_moves[piece.is_white].append((piece,move))
+                case "p": 
+                    self.pawn_check(piece)
                 case "k":
-                    moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
-                    for move in moves_to_check:
-                        if not border_check(move):
-                            continue
-                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
-                            continue
-                        self.posible_moves[piece.is_white].append((piece,move))
+                    self.knight_check(piece)
                 case "b":
                     pass #TODO add logik and stuff
                 case "R":
@@ -138,20 +154,14 @@ class board():
                 case "Q":
                     pass #TODO add logik and stuff
                 case "K":
-                    moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
-                    for move in moves_to_check:
-                        if not border_check(move):
-                            continue
-                        if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
-                            continue
-                        self.posible_moves[piece.is_white].append((piece,move))
+                    self.king_check(piece)
 
     def print_moves(self):
         print("======white======")
-        for move in self.posible_moves[1]:
+        for move in sorted(list(self.posible_moves[1]),key = lambda el: el[0].type):
             print(f"{move[0]} -> {convert_to_chess_notation(move[1])}")
         print("======black======")
-        for move in self.posible_moves[0]:
+        for move in sorted(list(self.posible_moves[0]),key = lambda el: el[0].type):
             print(f"{move[0]} -> {convert_to_chess_notation(move[1])}")
                     
 #======================GAME START=======================
