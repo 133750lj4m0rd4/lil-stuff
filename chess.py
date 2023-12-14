@@ -1,3 +1,5 @@
+from typing import Callable
+
 #======================EXTERNAL MOVES INFO=======================
 pawn_moves_stuff = {
     #(is_white,on_first_rank):(vec,vec)
@@ -9,9 +11,9 @@ pawn_moves_stuff = {
     "ranks":(1,6,)
 }
 
-pawn_moves = lambda figure: pawn_moves_stuff[
-        (figure.is_white,
-         figure.position[0] == pawn_moves_stuff["ranks"][figure.is_white])
+pawn_moves: Callable[[object], tuple] = lambda piece: pawn_moves_stuff[
+        (piece.is_white,
+         piece.position[0] == pawn_moves_stuff["ranks"][piece.is_white])
     ]
 
 bishop_moves = [((i,i),(-i,i),(i,-i),(-i,-i),) for i in range(1,8)]
@@ -34,10 +36,10 @@ knight_moves = tuple(knight_moves)
 
 #======================HANDY LAMBDAS=======================
 #TODO maybe rework this part idk
-border_check = lambda pos: pos[0] >= 0 and pos[0] <= 7 and pos[1] >= 0 and pos[1] <= 7
-do_move = lambda pos,move: (pos[0]+move[0], pos[1]+move[1])
+border_check: Callable[[tuple], bool] = lambda pos: pos[0] >= 0 and pos[0] <= 7 and pos[1] >= 0 and pos[1] <= 7
+do_move: Callable[[tuple, tuple], tuple] = lambda pos,move: (pos[0]+move[0], pos[1]+move[1])
 nums_to_letters = ['h','g','f','e','d','c','b','a']
-convert_to_chess_notation = lambda pos: f"{nums_to_letters[pos[1]]}{-pos[0]+8}"
+convert_to_chess_notation: Callable[[tuple], str] = lambda pos: f"{nums_to_letters[pos[1]]}{-pos[0]+8}"
 
 #======================FIGURE CLASS=======================
 class figure:
@@ -110,7 +112,7 @@ class board():
             out += "\n+"+("------"+"+")*8
         print(out)
     
-    def pawn_check(self,piece):
+    def pawn_check(self,piece: figure):
         #TODO add capture logic
         moves_to_check = map(lambda move: do_move(piece.position,move),pawn_moves(piece))
         for move in moves_to_check:
@@ -120,7 +122,7 @@ class board():
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
 
-    def knight_check(self,piece):
+    def knight_check(self,piece: figure):
         moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
         for move in moves_to_check:
             if not border_check(move):
@@ -129,22 +131,22 @@ class board():
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
 
-    def king_check(self,piece):
+    def king_check(self,piece: figure):
         moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
         for move in moves_to_check:
             if not border_check(move):
                 continue
-            if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
+            if any(map(lambda _piece: _piece.is_white == piece.is_white and _piece.position == move, self.figures)):
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
     
-    def bishop_check(self,piece):
+    def bishop_check(self,piece: figure):
         pass #TODO add logik and stuff
 
-    def rook_check(self,piece):
+    def rook_check(self,piece: figure):
         pass #TODO add logik and stuff
     
-    def queen_check(self,piece):
+    def queen_check(self,piece: figure):
         pass #TODO add logik and stuff
 
     def all_possible_moves(self):
