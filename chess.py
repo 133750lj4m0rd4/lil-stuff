@@ -81,6 +81,7 @@ class board():
         for i in range(8):
             self.figures.add(figure(True,'p',(6,i)))
             self.figures.add(figure(False,'p',(1,i)))
+            #pass
         self.board = []
         self.update_board()
         self.check_posible_moves()
@@ -91,23 +92,23 @@ class board():
             self.board[figure.position[0]][figure.position[1]] = 'w' + figure.type if figure.is_white else 'b' + figure.type
 
     def render_board(self):
-        #TODO rewrite to render into a string
-        print("\n+"+("------"+"+")*8,end="")
+        out = ""
+        out += "\n+"+("------"+"+")*8
         is_odd = False
         for line in self.board:
             is_odd = not is_odd
-            print("\n|", end="")
+            out += "\n|"
             for j in range(4):
-                print("      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|",end="")
-            print("\n|", end="")
+                out += "      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|"
+            out += "\n|"
             for cell in line:
-                print(f"  {cell}  "+"|" if is_odd else f"..{cell if cell != '  ' else '..'}.."+"|",end="")
+                out += f"  {cell}  "+"|" if is_odd else f"..{cell if cell != '  ' else '..'}.."+"|"
                 is_odd = not is_odd
-            print("\n|", end="")
+            out += "\n|"
             for j in range(4):
-                print("      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|",end="")
-            print("\n+"+("------"+"+")*8,end="")
-        print()
+                out += "      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|"
+            out += "\n+"+("------"+"+")*8
+        print(out)
     
     def check_posible_moves(self):
         self.posible_moves = [[],[]]
