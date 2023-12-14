@@ -160,7 +160,7 @@ class board():
                 case "R":
                     self.rook_check(piece)
                 case "Q":
-                    self.knight_check(piece)
+                    self.queen_check(piece)
                 case "K":
                     self.king_check(piece)
 
