@@ -137,10 +137,18 @@ class board():
             if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
+    
+    def bishop_check(self,piece):
+        pass #TODO add logik and stuff
+
+    def rook_check(self,piece):
+        pass #TODO add logik and stuff
+    
+    def queen_check(self,piece):
+        pass #TODO add logik and stuff
 
     def all_possible_moves(self):
         self.posible_moves = [[],[]]
-        #TODO decompose this shit. it's stinks
         for piece in self.figures:
             match piece.type:
                 case "p": 
@@ -148,11 +156,11 @@ class board():
                 case "k":
                     self.knight_check(piece)
                 case "b":
-                    pass #TODO add logik and stuff
+                    self.bishop_check(piece)
                 case "R":
-                    pass #TODO add logik and stuff
+                    self.rook_check(piece)
                 case "Q":
-                    pass #TODO add logik and stuff
+                    self.knight_check(piece)
                 case "K":
                     self.king_check(piece)
 
