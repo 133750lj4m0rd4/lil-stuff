@@ -150,7 +150,7 @@ class board():
     def all_possible_moves(self):
         self.posible_moves = [[],[]]
         for piece in self.figures:
-            match piece.type:
+            match piece.type: #TODO match case stuff still look stinky. maybe rewrite later
                 case "p": 
                     self.pawn_check(piece)
                 case "k":
