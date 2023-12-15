@@ -20,8 +20,8 @@ knight_moves = tuple(knight_moves)
 #TODO maybe rework this part idk
 border_check: Callable[[tuple], bool] = lambda pos: pos[0] >= 0 and pos[0] <= 7 and pos[1] >= 0 and pos[1] <= 7
 do_move: Callable[[tuple, tuple], tuple] = lambda pos,move: (pos[0]+move[0], pos[1]+move[1])
-nums_to_letters = ['h','g','f','e','d','c','b','a']
-convert_to_chess_notation: Callable[[tuple], str] = lambda pos: f"{nums_to_letters[pos[1]]}{-pos[0]+8}"
+files = ['a','b','c','d','e','f','g','h']
+convert_to_chess_notation: Callable[[tuple], str] = lambda pos: f"{files[pos[1]]}{-pos[0]+8}"
 
 #======================FIGURE CLASS=======================
 class figure:
@@ -72,22 +72,24 @@ class board():
             self.board[figure.position[0]][figure.position[1]] = 'w' + figure.type if figure.is_white else 'b' + figure.type
 
     def render_board(self):
-        out = ""
-        out += "\n+"+("------"+"+")*8
+        out = "\n  |"
+        for letter in files:
+            out += f"  {letter}   "+"|"    
+        out += "\n--+"+("------"+"+")*8
         is_odd = False
-        for line in self.board:
+        for i,line in enumerate(self.board):
             is_odd = not is_odd
-            out += "\n|"
+            out += "\n  |"
             for j in range(4):
                 out += "      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|"
-            out += "\n|"
+            out += f"\n{8 - i} |"
             for cell in line:
                 out += f"  {cell}  "+"|" if is_odd else f"..{cell if cell != '  ' else '..'}.."+"|"
                 is_odd = not is_odd
-            out += "\n|"
+            out += "\n  |"
             for j in range(4):
                 out += "      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|"
-            out += "\n+"+("------"+"+")*8
+            out += "\n--+"+("------"+"+")*8
         print(out)
     
     #TODO automatize and optimise some stuff bc those if-s smell
