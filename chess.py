@@ -121,9 +121,10 @@ class board():
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
     
-    def bishop_check(self,piece: figure):
+    def farseeing_piece_check(self,piece: figure, type: str):
         blocked_directions = [False,False,False,False]
-        for bracket in bishop_moves:
+        moves = bishop_moves if type == "b" else rook_moves
+        for bracket in moves:
             for i,move in enumerate(bracket):
                 move = do_move(piece.position,move)
                 if blocked_directions[i]:
@@ -141,29 +142,15 @@ class board():
                     self.posible_moves[piece.is_white].append((piece,move))
             if all(blocked_directions): return
 
+    def bishop_check(self,piece: figure):
+        self.farseeing_piece_check(piece,"b")
+
     def rook_check(self,piece: figure):
-        blocked_directions = [False,False,False,False]
-        for bracket in rook_moves:
-            for i,move in enumerate(bracket):
-                move = do_move(piece.position,move)
-                if blocked_directions[i]:
-                    continue
-                if not border_check(move):
-                    blocked_directions[i] = True
-                    continue
-                #this 'for' is more of an 'if', and will do 1 iteration MAX
-                #i am sure that it can be writtenbetter, but i haven't imagined how
-                for _piece in filter(lambda _piece: _piece.position == move,self.pieces):
-                    blocked_directions[i] = True
-                    if _piece.is_white != piece.is_white:
-                        self.posible_moves[piece.is_white].append((piece,move))
-                if not blocked_directions[i]:
-                    self.posible_moves[piece.is_white].append((piece,move))
-            if all(blocked_directions): return
+        self.farseeing_piece_check(piece,"R")
     
     def queen_check(self,piece: figure):
-        self.bishop_check(piece)
-        self.rook_check(piece)
+        self.farseeing_piece_check(piece,"b")
+        self.farseeing_piece_check(piece,"R")
 
     def king_check(self, piece: figure, check_check = False):
         moves_to_check = map(lambda move: do_move(piece.position,move),king_moves)
