@@ -1,20 +1,6 @@
 from typing import Callable
 
 #======================EXTERNAL MOVES INFO=======================
-pawn_moves_stuff = {
-    #(is_white,on_first_rank):(vec,vec)
-    (True,True):((-1,0),(-2,0)),
-    (True,False):((-1,0),),
-    (False,True):((1,0),(2,0)),
-    (False,False):((1,0),),
-    #to un-ify code
-    "ranks":(1,6,)
-}
-
-pawn_moves: Callable[[object], tuple] = lambda piece: pawn_moves_stuff[
-        (piece.is_white,
-         piece.position[0] == pawn_moves_stuff["ranks"][piece.is_white])
-    ]
 
 bishop_moves = [((i,i),(-i,i),(i,-i),(-i,-i),) for i in range(1,8)]
 bishop_moves = tuple(bishop_moves)
@@ -47,11 +33,7 @@ class figure:
         self.is_white = is_white
         self.type = p_type
         self.position = position
-    
-    def posible_moves(self):
-        match self.type:
-            case 'p':
-                return pawn_moves(self)
+
     
     def __repr__(self):
         return("b"*(not self.is_white) + "w"*self.is_white + self.type + f" {convert_to_chess_notation(self.position)}")
@@ -113,14 +95,18 @@ class board():
         print(out)
     
     def pawn_check(self,piece: figure):
-        #TODO add capture logic
-        moves_to_check = map(lambda move: do_move(piece.position,move),pawn_moves(piece))
-        for move in moves_to_check:
-            if not border_check(move):
-                continue
-            if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
-                continue
-            self.posible_moves[piece.is_white].append((piece,move))
+        captures = {1:((-1,1),(-1,-1)),0:((1,1),(1,-1))}
+        for move in map(lambda move: do_move(piece.position,move),captures[piece.is_white]):
+            if any(map(lambda _piece: _piece.position == move and _piece.is_white != piece.is_white, self.figures)):
+                self.posible_moves[piece.is_white].append((piece,move))
+        
+        if any(map(lambda _piece: _piece.position == do_move(piece.position,(1+(-2*piece.is_white),0)), self.figures)):
+            return
+        self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(1+(-2*piece.is_white),0))))
+
+        if any(map(lambda _piece: _piece.position == do_move(piece.position,(2+(-4*piece.is_white),0)), self.figures)):
+            return
+        self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(2+(-4*piece.is_white),0))))
 
     def knight_check(self,piece: figure):
         moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
@@ -131,7 +117,7 @@ class board():
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
 
-    def king_check(self,piece: figure):
+    def king_check(self, piece: figure, check_check = False):
         moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
         for move in moves_to_check:
             if not border_check(move):
