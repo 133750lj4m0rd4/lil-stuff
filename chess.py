@@ -94,17 +94,21 @@ class board():
             out += "\n+"+("------"+"+")*8
         print(out)
     
+    #TODO automatize and optimise some stuff bc those if-s smell
     def pawn_check(self,piece: figure): #TODO rewrite stuff to optimise all the 'if' stuff
         captures = {1:((-1,1),(-1,-1)),0:((1,1),(1,-1))}
         for move in map(lambda move: do_move(piece.position,move),captures[piece.is_white]):
-            if any(map(lambda _piece: _piece.position == move and _piece.is_white != piece.is_white, self.pieces)):
+            if any(map(lambda _piece: _piece.position == move and 
+                       _piece.is_white != piece.is_white, self.pieces)):
                 self.posible_moves[piece.is_white].append((piece,move))
-        
-        if any(map(lambda _piece: _piece.position == do_move(piece.position,(1+(-2*piece.is_white),0)), self.pieces)):
+        if any(map(
+            lambda _piece: _piece.position == do_move(piece.position,(1+(-2*piece.is_white),0)), 
+            self.pieces)):
             return
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(1+(-2*piece.is_white),0))))
-
-        if any(map(lambda _piece: _piece.position == do_move(piece.position,(2+(-4*piece.is_white),0)), self.pieces)):
+        if any(map(
+            lambda _piece: _piece.position == do_move(piece.position,(2+(-4*piece.is_white),0)), 
+            self.pieces)):
             return
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(2+(-4*piece.is_white),0))))
 
@@ -113,7 +117,9 @@ class board():
         for move in moves_to_check:
             if not border_check(move):
                 continue
-            if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.pieces)):
+            if any(map(
+                lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, 
+                self.pieces)):
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
 
@@ -122,7 +128,9 @@ class board():
         for move in moves_to_check:
             if not border_check(move):
                 continue
-            if any(map(lambda _piece: _piece.is_white == piece.is_white and _piece.position == move, self.pieces)):
+            if any(map(
+                lambda _piece: _piece.is_white == piece.is_white and _piece.position == move, 
+                self.pieces)):
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
     
