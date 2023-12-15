@@ -43,7 +43,7 @@ class figure:
 #======================BOARD CLASS=======================
 class board():
     def __init__(self):
-        self.figures = {
+        self.pieces = {
             figure(False,'R',(0,0)),
             figure(False,'k',(0,1)),
             figure(False,'b',(0,2)),
@@ -63,16 +63,16 @@ class board():
             figure(True,'R',(7,7)),
         }
         for i in range(8):
-            self.figures.add(figure(True,'p',(6,i)))
-            self.figures.add(figure(False,'p',(1,i)))
-            #pass
+            self.pieces.add(figure(True,'p',(6,i)))
+            self.pieces.add(figure(False,'p',(1,i)))
+            pass
         self.board = []
         self.update_board()
         self.all_possible_moves()
     
     def update_board(self):
         self.board = [['  ' for _ in range(8)] for _ in range(8)]
-        for figure in self.figures:
+        for figure in self.pieces:
             self.board[figure.position[0]][figure.position[1]] = 'w' + figure.type if figure.is_white else 'b' + figure.type
 
     def render_board(self):
@@ -94,17 +94,17 @@ class board():
             out += "\n+"+("------"+"+")*8
         print(out)
     
-    def pawn_check(self,piece: figure):
+    def pawn_check(self,piece: figure): #TODO rewrite stuff to optimise all the 'if' stuff
         captures = {1:((-1,1),(-1,-1)),0:((1,1),(1,-1))}
         for move in map(lambda move: do_move(piece.position,move),captures[piece.is_white]):
-            if any(map(lambda _piece: _piece.position == move and _piece.is_white != piece.is_white, self.figures)):
+            if any(map(lambda _piece: _piece.position == move and _piece.is_white != piece.is_white, self.pieces)):
                 self.posible_moves[piece.is_white].append((piece,move))
         
-        if any(map(lambda _piece: _piece.position == do_move(piece.position,(1+(-2*piece.is_white),0)), self.figures)):
+        if any(map(lambda _piece: _piece.position == do_move(piece.position,(1+(-2*piece.is_white),0)), self.pieces)):
             return
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(1+(-2*piece.is_white),0))))
 
-        if any(map(lambda _piece: _piece.position == do_move(piece.position,(2+(-4*piece.is_white),0)), self.figures)):
+        if any(map(lambda _piece: _piece.position == do_move(piece.position,(2+(-4*piece.is_white),0)), self.pieces)):
             return
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(2+(-4*piece.is_white),0))))
 
@@ -113,7 +113,7 @@ class board():
         for move in moves_to_check:
             if not border_check(move):
                 continue
-            if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.figures)):
+            if any(map(lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, self.pieces)):
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
 
@@ -122,12 +122,26 @@ class board():
         for move in moves_to_check:
             if not border_check(move):
                 continue
-            if any(map(lambda _piece: _piece.is_white == piece.is_white and _piece.position == move, self.figures)):
+            if any(map(lambda _piece: _piece.is_white == piece.is_white and _piece.position == move, self.pieces)):
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
     
     def bishop_check(self,piece: figure):
-        pass #TODO add logik and stuff
+        blocked_directions = [False,False,False,False]
+        for bracket in bishop_moves:
+            for i,move in enumerate(bracket):
+                move = do_move(piece.position,move)
+                if blocked_directions[i]:
+                    continue
+                if not border_check(move):
+                    blocked_directions[i] = True
+                    continue
+                for _piece in filter(lambda _piece: _piece.position == move,self.pieces):
+                    blocked_directions[i] = True
+                    if _piece.is_white != piece.is_white:
+                        self.posible_moves[piece.is_white].append((piece,move))
+                if not blocked_directions[i]:
+                    self.posible_moves[piece.is_white].append((piece,move))
 
     def rook_check(self,piece: figure):
         pass #TODO add logik and stuff
@@ -137,20 +151,26 @@ class board():
 
     def all_possible_moves(self):
         self.posible_moves = [[],[]]
-        for piece in self.figures:
+        for piece in self.pieces:
             match piece.type: #TODO match case stuff still look stinky. maybe rewrite later
                 case "p": 
                     self.pawn_check(piece)
+                    #pass
                 case "k":
                     self.knight_check(piece)
+                    #pass
                 case "b":
                     self.bishop_check(piece)
+                    #pass
                 case "R":
                     self.rook_check(piece)
+                    #pass
                 case "Q":
                     self.queen_check(piece)
+                    #pass
                 case "K":
                     self.king_check(piece)
+                    #pass
 
     def print_moves(self):
         print("======white======")
