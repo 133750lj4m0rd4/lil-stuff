@@ -105,11 +105,13 @@ class board():
             lambda _piece: _piece.position == do_move(piece.position,(1+(-2*piece.is_white),0)), 
             self.pieces)):
             return
+        
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(1+(-2*piece.is_white),0))))
         if any(map(
             lambda _piece: _piece.position == do_move(piece.position,(2+(-4*piece.is_white),0)), 
             self.pieces)):
             return
+        
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(2+(-4*piece.is_white),0))))
 
     def knight_check(self,piece: figure):
@@ -119,17 +121,6 @@ class board():
                 continue
             if any(map(
                 lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, 
-                self.pieces)):
-                continue
-            self.posible_moves[piece.is_white].append((piece,move))
-
-    def king_check(self, piece: figure, check_check = False):
-        moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
-        for move in moves_to_check:
-            if not border_check(move):
-                continue
-            if any(map(
-                lambda _piece: _piece.is_white == piece.is_white and _piece.position == move, 
                 self.pieces)):
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
@@ -144,18 +135,32 @@ class board():
                 if not border_check(move):
                     blocked_directions[i] = True
                     continue
+                #this 'for' is more of an 'if', and will do 1 iteration MAX
+                #i am sure that it can be writtenbetter, but i haven't imagined how
                 for _piece in filter(lambda _piece: _piece.position == move,self.pieces):
                     blocked_directions[i] = True
                     if _piece.is_white != piece.is_white:
                         self.posible_moves[piece.is_white].append((piece,move))
                 if not blocked_directions[i]:
                     self.posible_moves[piece.is_white].append((piece,move))
+            if all(blocked_directions): return
 
     def rook_check(self,piece: figure):
         pass #TODO add logik and stuff
     
     def queen_check(self,piece: figure):
         pass #TODO add logik and stuff
+
+    def king_check(self, piece: figure, check_check = False):
+        moves_to_check = map(lambda move: do_move(piece.position,move),queen_moves[0])
+        for move in moves_to_check:
+            if not border_check(move):
+                continue
+            if any(map(
+                lambda _piece: _piece.is_white == piece.is_white and _piece.position == move, 
+                self.pieces)):
+                continue
+            self.posible_moves[piece.is_white].append((piece,move))
 
     def all_possible_moves(self):
         self.posible_moves = [[],[]]
