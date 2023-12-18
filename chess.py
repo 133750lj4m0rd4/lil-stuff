@@ -64,8 +64,19 @@ class board():
             pass
         self.board = []
         self.update_board()
+        self.find_occupied()
         self.all_possible_moves()
     
+    def find_occupied(self):
+        self.b_occupied = []
+        self.w_occupied = []
+        self.occupied = []
+        un_ifyer = [self.b_occupied,self.w_occupied]
+        for piece in self.pieces:
+            un_ifyer[piece.is_white].append(piece.position)
+        self.occupied.extend(self.w_occupied)
+        self.occupied.extend(self.b_occupied)
+
     def update_board(self):
         self.board = [['  ' for _ in range(8)] for _ in range(8)]
         for figure in self.pieces:
@@ -95,37 +106,31 @@ class board():
     #TODO automatize and optimise some stuff bc those if-s smell
     def pawn_check(self,piece: figure): #TODO rewrite stuff to optimise all the 'if' stuff
         captures = {1:((-1,1),(-1,-1)),0:((1,1),(1,-1))}
+        un_ifyer = [self.b_occupied,self.w_occupied]
         for move in map(lambda move: do_move(piece.position,move),captures[piece.is_white]):
-            if any(map(lambda _piece: _piece.position == move and 
-                       _piece.is_white != piece.is_white, self.pieces)):
+            if (move in un_ifyer[not piece.is_white]):
                 self.posible_moves[piece.is_white].append((piece,move))
-        if any(map(
-            lambda _piece: _piece.position == do_move(piece.position,(1+(-2*piece.is_white),0)), 
-            self.pieces)):
+        if (do_move(piece.position,(1+(-2*piece.is_white),0)) in self.occupied):
             return
-        
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(1+(-2*piece.is_white),0))))
-        if any(map(
-            lambda _piece: _piece.position == do_move(piece.position,(2+(-4*piece.is_white),0)), 
-            self.pieces)):
+        if (do_move(piece.position,(2+(-4*piece.is_white),0)) in self.occupied):
             return
-        
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(2+(-4*piece.is_white),0))))
 
     def knight_check(self,piece: figure):
         moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
+        un_ifyer = [self.b_occupied,self.w_occupied]
         for move in moves_to_check:
             if not border_check(move):
                 continue
-            if any(map(
-                lambda _piece: _piece.position == move and _piece.is_white == piece.is_white, 
-                self.pieces)):
+            if (move in un_ifyer[piece.is_white]):
                 continue
             self.posible_moves[piece.is_white].append((piece,move))
     
     def farseeing_piece_check(self,piece: figure, type: str):
         blocked_directions = [False,False,False,False]
         moves = bishop_moves if type == "b" else rook_moves
+        un_ifyer = [self.b_occupied,self.w_occupied]
         for bracket in moves:
             for i,move in enumerate(bracket):
                 move = do_move(piece.position,move)
@@ -134,14 +139,13 @@ class board():
                 if not border_check(move):
                     blocked_directions[i] = True
                     continue
-                #this 'for' is more of an 'if', and will do 1 iteration MAX
-                #i am sure that it can be writtenbetter, but i haven't imagined how
-                for _piece in filter(lambda _piece: _piece.position == move,self.pieces):
+                if (move in self.occupied): 
                     blocked_directions[i] = True
-                    if _piece.is_white != piece.is_white:
-                        self.posible_moves[piece.is_white].append((piece,move))
-                if not blocked_directions[i]:
+                    if (move in un_ifyer[piece.is_white]):
+                        continue
                     self.posible_moves[piece.is_white].append((piece,move))
+                    continue
+                self.posible_moves[piece.is_white].append((piece,move))
             if all(blocked_directions): return
 
     def bishop_check(self,piece: figure):
@@ -159,11 +163,8 @@ class board():
         for move in moves_to_check:
             if not border_check(move):
                 continue
-            if any(map(
-                lambda _piece: _piece.is_white == piece.is_white and _piece.position == move, 
-                self.pieces)):
-                continue
-            self.posible_moves[piece.is_white].append((piece,move))
+            if (move not in self.occupied):
+                self.posible_moves[piece.is_white].append((piece,move))
 
     def all_possible_moves(self):
         self.posible_moves = [[],[]]
