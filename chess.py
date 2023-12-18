@@ -171,27 +171,23 @@ class board():
                 self.posible_moves[piece.is_white].append((piece,move))
 
     def all_possible_moves(self):
+        #TODO add un pasant and castling check
+        # also add check and checkmate stuff, but it's not as important
         self.posible_moves = [[],[]]
         for piece in self.pieces:
             match piece.type: #TODO match case stuff still look stinky. maybe rewrite later
                 case "p": 
                     self.pawn_check(piece)
-                    #pass
                 case "k":
                     self.knight_check(piece)
-                    #pass
                 case "b":
                     self.bishop_check(piece)
-                    #pass
                 case "R":
                     self.rook_check(piece)
-                    #pass
                 case "Q":
                     self.queen_check(piece)
-                    #pass
                 case "K":
                     self.king_check(piece)
-                    #pass
     
     def make_move(self,move):
         piece = move[0]
@@ -238,7 +234,6 @@ class board():
                 self.render_board()
                 print("======white======" if whiteness else "======black======")
                 self.move_choise(self.posible_moves[whiteness])
-            #break
 
     def print_moves(self):
         print("======white======")
@@ -250,6 +245,4 @@ class board():
                     
 #======================GAME START=======================
 b = board()
-#b.render_board()
-#b.print_moves()
 b.gameplay_loop()
