@@ -188,16 +188,51 @@ class board():
                 case "K":
                     self.king_check(piece)
                     #pass
+    
+    def make_move(self,move):
+        if move[1] in self.occupied:
+            pass #capture
+        pass #regular_move
+
+    def move_choise(self,moves):
+        def invalid_input():
+            print("invalid input!")
+            return self.move_choise(moves)
+        
+        for i,move in enumerate(moves):
+            print(f"{i}){move[0]} -> {convert_to_chess_notation(move[1])}", end = '\t')
+            if i%3 == 2: print()
+
+        choise_type = input("\nyou want to choose an index or a piece type? (i/pt):")
+        match choise_type:
+            case 'i':
+                try: self.make_move(moves[int(input("input index:"))])
+                except: invalid_input()
+            case 'pt':
+                piece_type = input("piece_type:")
+                if piece_type not in ['p','k','b','R','Q','K',]: invalid_input()
+                return self.move_choise(list(filter(lambda e: e[0].type == piece_type,moves)))
+            case _:
+                invalid_input()
+
+    def gameplay_loop(self):
+        while True:
+            for whiteness in [1,0]:
+                self.render_board()
+                print("======white======" if whiteness else "======black======")
+                self.move_choise(self.posible_moves[whiteness])
+            break
 
     def print_moves(self):
         print("======white======")
-        for move in sorted(list(self.posible_moves[1]),key = lambda el: el[0].type):
+        for move in sorted(self.posible_moves[1],key = lambda el: el[0].type):
             print(f"{move[0]} -> {convert_to_chess_notation(move[1])}")
         print("======black======")
-        for move in sorted(list(self.posible_moves[0]),key = lambda el: el[0].type):
+        for move in sorted(self.posible_moves[0],key = lambda el: el[0].type):
             print(f"{move[0]} -> {convert_to_chess_notation(move[1])}")
                     
 #======================GAME START=======================
 b = board()
-b.render_board()
-b.print_moves()
+#b.render_board()
+#b.print_moves()
+b.gameplay_loop()
