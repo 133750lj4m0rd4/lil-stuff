@@ -63,19 +63,23 @@ class board():
             self.pieces.add(figure(False,'p',(1,i)))
             pass
         self.board = []
+
+        self.last_move = None
+
+        self.b_occupied = set()
+        self.w_occupied = set()
+        self.occupied = set()
+        
         self.update_board()
         self.find_occupied()
         self.all_possible_moves()
     
     def find_occupied(self):
-        self.b_occupied = []
-        self.w_occupied = []
-        self.occupied = []
         un_ifyer = [self.b_occupied,self.w_occupied]
         for piece in self.pieces:
-            un_ifyer[piece.is_white].append(piece.position)
-        self.occupied.extend(self.w_occupied)
-        self.occupied.extend(self.b_occupied)
+            un_ifyer[piece.is_white].add(piece.position)
+        self.occupied.update(self.w_occupied)
+        self.occupied.update(self.b_occupied)
 
     def update_board(self):
         self.board = [['  ' for _ in range(8)] for _ in range(8)]
@@ -190,9 +194,22 @@ class board():
                     #pass
     
     def make_move(self,move):
-        if move[1] in self.occupied:
-            pass #capture
-        pass #regular_move
+        piece = move[0]
+        move = move[1]
+        un_ifyer:list[set,set] = [self.b_occupied,self.w_occupied]
+
+        if move in un_ifyer[not piece.is_white]:
+            self.pieces.discard(list(filter(lambda p: p.position == move,self.pieces))[0])
+            un_ifyer[not piece.is_white].remove(move)
+        
+        self.occupied.remove(piece.position)
+        un_ifyer[piece.is_white].remove(piece.position)
+        piece.position = move
+        un_ifyer[piece.is_white].add(piece.position)
+        self.occupied.add(piece.position)
+        
+        self.update_board()
+        self.all_possible_moves()
 
     def move_choise(self,moves):
         def invalid_input():
@@ -221,7 +238,7 @@ class board():
                 self.render_board()
                 print("======white======" if whiteness else "======black======")
                 self.move_choise(self.posible_moves[whiteness])
-            break
+            #break
 
     def print_moves(self):
         print("======white======")
