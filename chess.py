@@ -107,8 +107,7 @@ class board():
             out += "\n--+"+("------"+"+")*8
         print(out)
     
-    #TODO automatize and optimise some stuff bc those if-s smell
-    def pawn_check(self,piece: figure): #TODO rewrite stuff to optimise all the 'if' stuff
+    def pawn_check(self,piece: figure): #TODO still smells. idk what to do
         captures = {1:((-1,1),(-1,-1)),0:((1,1),(1,-1))}
         un_ifyer = [self.b_occupied,self.w_occupied]
         for move in map(lambda move: do_move(piece.position,move),captures[piece.is_white]):
@@ -189,7 +188,7 @@ class board():
                 case "K":
                     self.king_check(piece)
     
-    def make_move(self,move):
+    def make_move(self,move):#TODO add last move interaction for future un passant logic
         piece = move[0]
         move = move[1]
         un_ifyer:list[set,set] = [self.b_occupied,self.w_occupied]
