@@ -11,10 +11,7 @@ rook_moves = tuple(rook_moves)
 king_moves = ((1,0),(-1,0),(0,1),(0,-1),
               (-1,1),(1,-1),(1,1),(-1,-1),)
 
-knight_moves = [(1,2),(2,1)]
-knight_moves.extend(map(lambda a: (-a[0],a[1]),knight_moves[0:len(knight_moves)]))
-knight_moves.extend(map(lambda a: (a[0],-a[1]),knight_moves[0:len(knight_moves)]))
-knight_moves = tuple(knight_moves)
+knight_moves = ((1,2),(2,1),(-1,2),(-2,1),(1,-2),(2,-1),(-1,-2),(-2,-1),)
 
 #======================HANDY LAMBDAS=======================
 #TODO maybe rework this part idk
