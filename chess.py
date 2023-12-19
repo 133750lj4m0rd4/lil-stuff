@@ -231,18 +231,17 @@ class Board():
         match choise_type:
             case 'i':
                 try: self.make_move(moves[int(input("input index:"))])
-                except: invalid_input()
+                except: return invalid_input()
             case 'pt':
                 piece_type = input("piece type:")
-                if piece_type not in ['p','k','b','R','Q','K',]: invalid_input()
+                if piece_type not in ['p','k','b','R','Q','K',]: return invalid_input()
                 return self.move_choise(list(filter(lambda e: e[0].type == piece_type,moves)),pt = False)
             case 'f':
-                piece_type = input("file:")
-                if piece_type not in files: invalid_input()
-                invalid_input()
-                #return self.move_choise(list(filter(lambda e: e[0].type == piece_type,moves)),pt = False)
+                file = input("file:")
+                if file not in files: return invalid_input()
+                return self.move_choise(list(filter(lambda e: e[1][1] == files.index(file),moves)),pt = False)
             case _:
-                invalid_input()
+                return invalid_input()
 
     def gameplay_loop(self):
         while True:
