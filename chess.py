@@ -1,7 +1,6 @@
 from typing import Callable
 
 #======================EXTERNAL MOVES INFO=======================
-
 bishop_offsets = [((i,i),(-i,i),(i,-i),(-i,-i),) for i in range(1,7)]
 bishop_offsets = tuple(bishop_offsets)
 
@@ -22,13 +21,23 @@ format_position_to_chess_notation: Callable[[tuple], str] = lambda pos: f"{files
 
 #======================PIECE CLASS=======================
 class Piece:
+    def promote(self):
+        print("choose what promote to")
+        p_type = input("(k,b,R,Q):")
+        if p_type in ('k','b','R','Q'):
+            self.type = p_type
+        else:
+            print("invalid input")
+            self.promote()
+
     def __init__(self,is_white:bool,p_type:chr,position:tuple[int]):
         self.is_white = is_white
         self.type = p_type
         self.position = position
     
     def __repr__(self):
-        return("b"*(not self.is_white) + "w"*self.is_white + self.type + f" {format_position_to_chess_notation(self.position)}")
+        return(self.type + f" {format_position_to_chess_notation(self.position)}")
+        #return("b"*(not self.is_white) + "w"*self.is_white + self.type + f" {format_position_to_chess_notation(self.position)}")
     
     __str__ = __repr__
 
@@ -187,7 +196,7 @@ class Board():
                     self.king_check(piece)
     
     def make_move(self,move):#TODO add last move interaction for future un passant logic
-        piece = move[0]
+        piece : Piece = move[0]
         move = move[1]
         un_ifyer:list[set,set] = [self.b_occupied,self.w_occupied]
 
@@ -197,14 +206,17 @@ class Board():
         
         self.occupied.remove(piece.position)
         un_ifyer[piece.is_white].remove(piece.position)
+        
         piece.position = move
+        if (piece.position[0] == [0,7][piece.is_white] and piece.type == 'p'):
+            piece.promote()
+        
         un_ifyer[piece.is_white].add(piece.position)
         self.occupied.add(piece.position)
-        
         self.update_board()
         self.all_possible_moves()
 
-    def move_choise(self,moves):
+    def move_choise(self,moves,pt = True, f = True):
         def invalid_input():
             print("invalid input!")
             return self.move_choise(moves)
@@ -213,15 +225,22 @@ class Board():
             print(f"{i}){move[0]} -> {format_position_to_chess_notation(move[1])}", end = '\t')
             if i%3 == 2: print()
 
-        choise_type = input("\nyou want to choose an index or a piece type? (i/pt):")
+        choise_type = input(
+            f"\nyou want to choose an index{", file"*f}{", piece type"*pt}? (i{"/f"*f}{"/pt"*pt}):"
+            )
         match choise_type:
             case 'i':
                 try: self.make_move(moves[int(input("input index:"))])
                 except: invalid_input()
             case 'pt':
-                piece_type = input("piece_type:")
+                piece_type = input("piece type:")
                 if piece_type not in ['p','k','b','R','Q','K',]: invalid_input()
-                return self.move_choise(list(filter(lambda e: e[0].type == piece_type,moves)))
+                return self.move_choise(list(filter(lambda e: e[0].type == piece_type,moves)),pt = False)
+            case 'f':
+                piece_type = input("file:")
+                if piece_type not in files: invalid_input()
+                invalid_input()
+                #return self.move_choise(list(filter(lambda e: e[0].type == piece_type,moves)),pt = False)
             case _:
                 invalid_input()
 
