@@ -2,16 +2,16 @@ from typing import Callable
 
 #======================EXTERNAL MOVES INFO=======================
 
-bishop_moves = [((i,i),(-i,i),(i,-i),(-i,-i),) for i in range(1,8)]
-bishop_moves = tuple(bishop_moves)
+bishop_offsets = [((i,i),(-i,i),(i,-i),(-i,-i),) for i in range(1,8)]
+bishop_offsets = tuple(bishop_offsets)
 
-rook_moves = [((i,0),(-i,0),(0,i),(0,-i),) for i in range(1,8)]
-rook_moves = tuple(rook_moves)
+rook_offsets = [((i,0),(-i,0),(0,i),(0,-i),) for i in range(1,8)]
+rook_offsets = tuple(rook_offsets)
 
-king_moves = ((1,0),(-1,0),(0,1),(0,-1),
+king_offsets = ((1,0),(-1,0),(0,1),(0,-1),
               (-1,1),(1,-1),(1,1),(-1,-1),)
 
-knight_moves = ((1,2),(2,1),(-1,2),(-2,1),(1,-2),(2,-1),(-1,-2),(-2,-1),)
+knight_offsets = ((1,2),(2,1),(-1,2),(-2,1),(1,-2),(2,-1),(-1,-2),(-2,-1),)
 
 #======================HANDY LAMBDAS=======================
 #TODO maybe rework this part idk
@@ -118,7 +118,7 @@ class board():
         self.posible_moves[piece.is_white].append((piece,do_move(piece.position,(2+(-4*piece.is_white),0))))
 
     def knight_check(self,piece: figure):
-        moves_to_check = map(lambda move: do_move(piece.position,move),knight_moves)
+        moves_to_check = map(lambda move: do_move(piece.position,move),knight_offsets)
         un_ifyer = [self.b_occupied,self.w_occupied]
         for move in moves_to_check:
             if not border_check(move):
@@ -129,7 +129,7 @@ class board():
     
     def farseeing_piece_check(self,piece: figure, type: str):
         blocked_directions = [False,False,False,False]
-        moves = bishop_moves if type == "b" else rook_moves
+        moves = bishop_offsets if type == "b" else rook_offsets
         un_ifyer = [self.b_occupied,self.w_occupied]
         for bracket in moves:
             for i,move in enumerate(bracket):
@@ -157,7 +157,7 @@ class board():
         self.farseeing_piece_check(piece,"R")
 
     def king_check(self, piece: figure, check_check = False):
-        moves_to_check = map(lambda move: do_move(piece.position,move),king_moves)
+        moves_to_check = map(lambda move: do_move(piece.position,move),king_offsets)
         for move in moves_to_check:
             if not border_check(move):
                 continue
