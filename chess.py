@@ -66,7 +66,7 @@ class Board():
         self.w_occupied = set()
         self.occupied = set()
         
-        self.update_Board()
+        self.update_board()
         self.find_occupied()
         self.all_possible_moves()
     
@@ -77,12 +77,12 @@ class Board():
         self.occupied.update(self.w_occupied)
         self.occupied.update(self.b_occupied)
 
-    def update_Board(self):
+    def update_board(self):
         self.Board = [['  ' for _ in range(8)] for _ in range(8)]
         for piece in self.pieces:
             self.Board[piece.position[0]][piece.position[1]] = 'w' + piece.type if piece.is_white else 'b' + piece.type
 
-    def render_Board(self):
+    def render_board(self):
         out = "\n  |"
         for letter in files:
             out += f"  {letter}   "+"|"    
@@ -201,7 +201,7 @@ class Board():
         un_ifyer[piece.is_white].add(piece.position)
         self.occupied.add(piece.position)
         
-        self.update_Board()
+        self.update_board()
         self.all_possible_moves()
 
     def move_choise(self,moves):
@@ -228,7 +228,7 @@ class Board():
     def gameplay_loop(self):
         while True:
             for whiteness in [1,0]:
-                self.render_Board()
+                self.render_board()
                 print("======white======" if whiteness else "======black======")
                 self.move_choise(self.posible_moves[whiteness])
 
