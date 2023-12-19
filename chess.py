@@ -146,8 +146,6 @@ class board():
                     blocked_directions[i] = True
                     if (move in un_ifyer[piece.is_white]):
                         continue
-                    self.posible_moves[piece.is_white].append((piece,move))
-                    continue
                 self.posible_moves[piece.is_white].append((piece,move))
             if all(blocked_directions): return
 
