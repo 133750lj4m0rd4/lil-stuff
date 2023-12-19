@@ -92,9 +92,7 @@ class Board():
             self.Board[piece.position[0]][piece.position[1]] = 'w' + piece.type if piece.is_white else 'b' + piece.type
 
     def render_board(self):
-        out = "\n  |"
-        for letter in files:
-            out += f"  {letter}   "+"|"    
+        out = ""
         out += "\n--+"+("------"+"+")*8
         is_odd = False
         for i,line in enumerate(self.Board):
@@ -110,6 +108,9 @@ class Board():
             for j in range(4):
                 out += "      "+"|"+"......"+"|" if is_odd else "......"+"|"+"      "+"|"
             out += "\n--+"+("------"+"+")*8
+        out += "\n  |"
+        for letter in files:
+            out += f"  {letter}   "+"|"    
         print(out)
     
     def pawn_check(self,piece: Piece): #TODO maybe improve later
@@ -208,7 +209,7 @@ class Board():
         un_ifyer[piece.is_white].remove(piece.position)
         
         piece.position = move
-        if (piece.position[0] == [0,7][piece.is_white] and piece.type == 'p'):
+        if (piece.position[0] == [7,0][piece.is_white] and piece.type == 'p'):
             piece.promote()
         
         un_ifyer[piece.is_white].add(piece.position)
